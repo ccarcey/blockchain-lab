@@ -1,5 +1,6 @@
-const fs = require('fs');
-const { ethers } = require("hardhat");
+import fs from 'fs';
+import pkg from 'hardhat';
+const { ethers } = pkg;
 
 async function main() {
     // 1. Desplegar el contrato MinimalForwarder de OpenZeppelin
