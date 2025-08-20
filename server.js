@@ -11,16 +11,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuración del proveedor y contrato
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const contractABI = JSON.parse(fs.readFileSync('./artifacts/contracts/Votacion.sol/Votacion.json')).abi;
 
-// Leer direcciones del archivo .env
 const envContent = fs.readFileSync('.env', 'utf8');
 const CONTRACT_ADDRESS = envContent.match(/CONTRACT_ADDRESS=(.+)/)?.[1];
 const FORWARDER_ADDRESS = envContent.match(/FORWARDER_ADDRESS=(.+)/)?.[1];
@@ -35,7 +32,6 @@ if (!CONTRACT_ADDRESS) {
 
 const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, provider);
 
-// Función para verificar si el contrato existe
 async function verificarContrato() {
     try {
         const code = await provider.getCode(CONTRACT_ADDRESS);
@@ -52,12 +48,10 @@ async function verificarContrato() {
     }
 }
 
-// Rutas de la API
 app.get('/api/candidatos', async (req, res) => {
     try {
         console.log("📋 Obteniendo candidatos...");
         
-        // Verificar si el contrato existe
         const contratoExiste = await verificarContrato();
         if (!contratoExiste) {
             return res.status(500).json({ 
@@ -66,11 +60,9 @@ app.get('/api/candidatos', async (req, res) => {
             });
         }
         
-        // Intentar diferentes métodos para obtener candidatos
         let candidatos = [];
         
         try {
-            // Método 1: función obtenerCandidatos
             const candidatosRaw = await contract.obtenerCandidatos();
             candidatos = candidatosRaw.map((candidato, index) => ({
                 id: index,
@@ -81,7 +73,6 @@ app.get('/api/candidatos', async (req, res) => {
             console.log("❌ obtenerCandidatos falló:", error1.message);
             
             try {
-                // Método 2: acceso directo al array candidatos
                 let i = 0;
                 while (i < 10) { // Límite de seguridad
                     const candidato = await contract.candidatos(i);

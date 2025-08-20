@@ -1,9 +1,10 @@
 # Sistema de votaciones
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+Open a terminal and run this command:
+    npx hardhat node
+
+Open another terminal and run this 2 commands:
+    npx hardhat run scripts/deploy.js --network localhost
+    npm start
 ```
